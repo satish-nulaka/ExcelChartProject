@@ -6,7 +6,7 @@ public class LineItemData {
     private String campaignId;
     private String lineItemId;
     private String lineItem;
-    private Double impressions;
+    private Long impressions;
     private Long playouts;
     private Double impPerPlayout;
     private BigDecimal mediaCpm;
@@ -18,7 +18,7 @@ public class LineItemData {
     private BigDecimal clientMargin;
     private BigDecimal totalSpend;
 
-    public LineItemData(String campaignId, String lineItemId, String lineItem, Double impressions, Long playouts,
+    public LineItemData(String campaignId, String lineItemId, String lineItem, Long impressions, Long playouts,
                         Double impPerPlayout, BigDecimal mediaCpm, BigDecimal totalCpm,
                         BigDecimal mediaCosts, BigDecimal dataCosts, BigDecimal platformCosts,
                         BigDecimal invoiceAmount, BigDecimal clientMargin, BigDecimal totalSpend) {
@@ -42,7 +42,7 @@ public class LineItemData {
     public String getCampaignId() { return campaignId; }
     public String getLineItemId() { return lineItemId; }
     public String getLineItem() { return lineItem; }
-    public Double getImpressions() { return impressions; }
+    public Long getImpressions() { return impressions; }
     public Long getPlayouts() { return playouts; }
     public Double getImpPerPlayout() { return impPerPlayout; }
     public BigDecimal getMediaCpm() { return mediaCpm; }

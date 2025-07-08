@@ -6,7 +6,7 @@ public class CreativeFileData {
     private String campaignId;
     private String creativeFileId;
     private String creativeFile;
-    private Double impressions;
+    private Long impressions;
     private Long playouts;
     private Double impPerPlayout;
     private BigDecimal mediaCpm;
@@ -18,7 +18,7 @@ public class CreativeFileData {
     private BigDecimal clientMargin;
     private BigDecimal totalSpend;
 
-    public CreativeFileData(String campaignId, String creativeFileId, String creativeFile, Double impressions, Long playouts,
+    public CreativeFileData(String campaignId, String creativeFileId, String creativeFile, Long impressions, Long playouts,
                             Double impPerPlayout, BigDecimal mediaCpm, BigDecimal totalCpm,
                             BigDecimal mediaCosts, BigDecimal dataCosts, BigDecimal platformCosts,
                             BigDecimal invoiceAmount, BigDecimal clientMargin, BigDecimal totalSpend) {
@@ -42,7 +42,7 @@ public class CreativeFileData {
     public String getCampaignId() { return campaignId; }
     public String getCreativeFileId() { return creativeFileId; }
     public String getCreativeFile() { return creativeFile; }
-    public Double getImpressions() { return impressions; }
+    public Long getImpressions() { return impressions; }
     public Long getPlayouts() { return playouts; }
     public Double getImpPerPlayout() { return impPerPlayout; }
     public BigDecimal getMediaCpm() { return mediaCpm; }

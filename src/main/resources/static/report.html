@@ -1,11 +1,102 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Report Generated</title>
+    <title>Excel Processing Complete</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .success-icon {
+            font-size: 48px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+        .info-box {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+    </style>
 </head>
 <body>
-    <h1>Report Generated</h1>
-    <p>Your Excel file has been processed and reports are generated.</p>
-    <a href="/output-presentation.pptx" download>Download PowerPoint Report</a>
+    <div class="container">
+        <div class="success-icon">✅</div>
+        <h1>Excel Processing Complete!</h1>
+        
+        <div class="message">
+            Your Excel file has been successfully processed and analyzed.
+        </div>
+        
+        <div class="info-box">
+            <h3>What was processed:</h3>
+            <ul>
+                <li>✅ Excel file uploaded and validated</li>
+                <li>✅ All worksheets processed</li>
+                <li>✅ Campaign data extracted</li>
+                <li>✅ Data categorized by type (Campaign, City, Publisher, etc.)</li>
+                <li>✅ Ready for chart generation</li>
+            </ul>
+            
+            <h3>Next Steps:</h3>
+            <ul>
+                <li>📊 Charts will be generated automatically</li>
+                <li>📈 PowerPoint presentation will be created</li>
+                <li>📥 Download link will be available shortly</li>
+            </ul>
+        </div>
+        
+        <div>
+            <a href="/" class="btn btn-secondary">Upload Another File</a>
+            <a href="/test-excel" class="btn">Test with Sample Data</a>
+        </div>
+        
+        <div style="margin-top: 30px; font-size: 14px; color: #6c757d;">
+            <p>Check the console/terminal for detailed processing information.</p>
+        </div>
+    </div>
 </body>
 </html>

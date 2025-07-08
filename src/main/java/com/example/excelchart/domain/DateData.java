@@ -7,7 +7,7 @@ import java.time.LocalDate;
 public class DateData {
     private String campaignId;
     private LocalDate date;
-    private Double impressions;
+    private Long impressions;
     private Long playouts;
     private Double impPerPlayout;
     private BigDecimal mediaCpm;
@@ -19,7 +19,7 @@ public class DateData {
     private BigDecimal clientMargin;
     private BigDecimal totalSpend;
 
-    public DateData(String campaignId, LocalDate date, Double impressions, Long playouts,
+    public DateData(String campaignId, LocalDate date, Long impressions, Long playouts,
                     Double impPerPlayout, BigDecimal mediaCpm, BigDecimal totalCpm,
                     BigDecimal mediaCosts, BigDecimal dataCosts, BigDecimal platformCosts,
                     BigDecimal invoiceAmount, BigDecimal clientMargin, BigDecimal totalSpend) {
@@ -41,7 +41,7 @@ public class DateData {
     // Getters
     public String getCampaignId() { return campaignId; }
     public LocalDate getDate() { return date; }
-    public Double getImpressions() { return impressions; }
+    public Long getImpressions() { return impressions; }
     public Long getPlayouts() { return playouts; }
     public Double getImpPerPlayout() { return impPerPlayout; }
     public BigDecimal getMediaCpm() { return mediaCpm; }

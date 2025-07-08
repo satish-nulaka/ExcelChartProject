@@ -4,8 +4,9 @@ import java.math.BigDecimal;
 
 public class CategoryData {
     private String campaignId;
-    private String category;
-    private Double impressions;
+    private String categoryGroup;
+    private String categoryName;
+    private Long impressions;
     private Long playouts;
     private Double impPerPlayout;
     private BigDecimal mediaCpm;
@@ -17,12 +18,13 @@ public class CategoryData {
     private BigDecimal clientMargin;
     private BigDecimal totalSpend;
 
-    public CategoryData(String campaignId, String category, Double impressions, Long playouts,
+    public CategoryData(String campaignId, String categoryGroup, String categoryName, Long impressions, Long playouts,
                         Double impPerPlayout, BigDecimal mediaCpm, BigDecimal totalCpm,
                         BigDecimal mediaCosts, BigDecimal dataCosts, BigDecimal platformCosts,
                         BigDecimal invoiceAmount, BigDecimal clientMargin, BigDecimal totalSpend) {
         this.campaignId = campaignId;
-        this.category = category;
+        this.categoryGroup = categoryGroup;
+        this.categoryName = categoryName;
         this.impressions = impressions;
         this.playouts = playouts;
         this.impPerPlayout = impPerPlayout;
@@ -38,8 +40,9 @@ public class CategoryData {
 
     // Getters
     public String getCampaignId() { return campaignId; }
-    public String getCategory() { return category; }
-    public Double getImpressions() { return impressions; }
+    public String getCategoryGroup() { return categoryGroup; }
+    public String getCategoryName() { return categoryName; }
+    public Long getImpressions() { return impressions; }
     public Long getPlayouts() { return playouts; }
     public Double getImpPerPlayout() { return impPerPlayout; }
     public BigDecimal getMediaCpm() { return mediaCpm; }
@@ -55,7 +58,8 @@ public class CategoryData {
     public String toString() {
         return "CategoryData{" +
                 "campaignId='" + campaignId + '\'' +
-                ", category='" + category + '\'' +
+                ", categoryGroup='" + categoryGroup + '\'' +
+                ", categoryName='" + categoryName + '\'' +
                 ", impressions=" + impressions +
                 ", playouts=" + playouts +
                 ", impPerPlayout=" + impPerPlayout +

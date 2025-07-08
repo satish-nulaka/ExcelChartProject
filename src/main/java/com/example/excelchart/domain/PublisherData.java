@@ -6,7 +6,7 @@ public class PublisherData {
     private String campaignId;
     private String publisherId;
     private String publisher;
-    private Double impressions;
+    private Long impressions;
     private Long playouts;
     private Double impPerPlayout;
     private BigDecimal mediaCpm;
@@ -18,7 +18,7 @@ public class PublisherData {
     private BigDecimal clientMargin;
     private BigDecimal totalSpend;
 
-    public PublisherData(String campaignId, String publisherId, String publisher, Double impressions, Long playouts,
+    public PublisherData(String campaignId, String publisherId, String publisher, Long impressions, Long playouts,
                          Double impPerPlayout, BigDecimal mediaCpm, BigDecimal totalCpm,
                          BigDecimal mediaCosts, BigDecimal dataCosts, BigDecimal platformCosts,
                          BigDecimal invoiceAmount, BigDecimal clientMargin, BigDecimal totalSpend) {
@@ -42,7 +42,7 @@ public class PublisherData {
     public String getCampaignId() { return campaignId; }
     public String getPublisherId() { return publisherId; }
     public String getPublisher() { return publisher; }
-    public Double getImpressions() { return impressions; }
+    public Long getImpressions() { return impressions; }
     public Long getPlayouts() { return playouts; }
     public Double getImpPerPlayout() { return impPerPlayout; }
     public BigDecimal getMediaCpm() { return mediaCpm; }
