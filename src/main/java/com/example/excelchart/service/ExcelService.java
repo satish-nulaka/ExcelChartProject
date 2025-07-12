@@ -15,18 +15,38 @@ import com.example.excelchart.domain.LineItemData;
 import com.example.excelchart.domain.CreativeFileData;
 import com.example.excelchart.domain.DmaData;
 
+import org.knowm.xchart.PieChart;
+import org.knowm.xchart.PieChartBuilder;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.style.PieStyler;
+
 import java.io.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.awt.Font;
+import java.awt.Color;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xddf.usermodel.chart.*;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDLbls;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STDLblPos;
+
 
 @Service
 public class ExcelService {
 
     @Autowired
     private CampaignOverviewPPTService pptService;
+
+    @Autowired
+    private ExcelPieChartGeneratorService excelPieChartGeneratorService;
 
     private static final Pattern SHEET_NAME_PATTERN = Pattern.compile("^(\\d+)\\.\\s*(.+)$");
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy");
@@ -643,6 +663,9 @@ public class ExcelService {
         System.out.println("Line item data: " + lineItemDataList.size() + " records");
         System.out.println("Creative file data: " + creativeFileDataList.size() + " records");
         System.out.println("DMA data: " + dmaDataList.size() + " records");
+
+        // Generate Category Pie Chart
+        //generateCategoryPieChart();
         
         // Generate PowerPoint with Campaign Overview
         try {
@@ -656,6 +679,173 @@ public class ExcelService {
         }
         
         System.out.println("Chart generation completed.");
+    }
+
+    // Pie chart for CategoryData (categoryName vs impressions)
+    /*private void generateCategoryPieChart() {
+        if (categoryDataList == null || categoryDataList.isEmpty()) {
+            System.out.println("No location data for pie chart.");
+            return;
+        }
+    
+        // Aggregate impressions by location name
+        Map<String, Long> locationImpressions = new LinkedHashMap<>();
+        for (CategoryData data : categoryDataList) {
+            String rawName = data.getCategoryName();
+            if (rawName == null || rawName.trim().isEmpty()) continue;
+    
+            String locationName = rawName.trim();
+            long impressions = data.getImpressions() != null ? data.getImpressions() : 0L;
+    
+            locationImpressions.put(locationName,
+                locationImpressions.getOrDefault(locationName, 0L) + impressions);
+        }
+    
+        if (locationImpressions.isEmpty()) {
+            System.out.println("No valid location names for pie chart.");
+            return;
+        }
+    
+        try {
+            PieChart chart = new PieChartBuilder()
+                    .width(900)
+                    .height(600)
+                    .title("Impressions")
+                    .build();
+    
+            // Excel-like style settings
+            chart.getStyler().setLegendVisible(true);
+            chart.getStyler().setLegendPosition(org.knowm.xchart.style.PieStyler.LegendPosition.OutsideE);
+            chart.getStyler().setLegendLayout(org.knowm.xchart.style.PieStyler.LegendLayout.Vertical);
+            chart.getStyler().setLabelType(org.knowm.xchart.style.PieStyler.LabelType.NameAndPercentage);
+            chart.getStyler().setLabelsFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 14));
+            chart.getStyler().setLabelsDistance(1.15); // Push labels outside the pie
+            chart.getStyler().setLabelsFontColor(java.awt.Color.BLACK);
+            chart.getStyler().setCircular(true);
+            chart.getStyler().setPlotContentSize(0.9); // Make space for labels
+            chart.getStyler().setPlotBackgroundColor(java.awt.Color.WHITE);
+            chart.getStyler().setChartBackgroundColor(java.awt.Color.WHITE);
+    
+            // Excel-style green shades (can be customized)
+            java.awt.Color[] colors = {
+                new java.awt.Color(132, 169, 108),
+                new java.awt.Color(157, 187, 114),
+                new java.awt.Color(183, 205, 120),
+                new java.awt.Color(208, 223, 126),
+                new java.awt.Color(234, 241, 132),
+                new java.awt.Color(192, 215, 182),
+                new java.awt.Color(153, 192, 146),
+                new java.awt.Color(116, 169, 110),
+                new java.awt.Color(79, 146, 74),
+                new java.awt.Color(41, 123, 38)
+            };
+    
+            List<java.awt.Color> colorList = new ArrayList<>();
+            int colorIndex = 0;
+    
+            for (Map.Entry<String, Long> entry : locationImpressions.entrySet()) {
+                chart.addSeries(entry.getKey(), entry.getValue());
+                if (colorIndex < colors.length) {
+                    colorList.add(colors[colorIndex++]);
+                } else {
+                    colorList.add(java.awt.Color.LIGHT_GRAY); // fallback for extra items
+                }
+            }
+    
+            chart.getStyler().setSeriesColors(colorList.toArray(new java.awt.Color[0]));
+    
+            // Save the chart as an image
+            BitmapEncoder.saveBitmap(chart, "location_pie_chart", BitmapEncoder.BitmapFormat.PNG);
+            System.out.println("Pie chart saved as location_pie_chart.png");
+    
+        } catch (Exception e) {
+            System.err.println("Error generating location pie chart: " + e.getMessage());
+        }
+    }*/
+       
+    // Generate Excel file with data and pie chart
+    public void generateLocationPieChartExcel() throws Exception {
+        if (categoryDataList == null || categoryDataList.isEmpty()) {
+            System.out.println("No location data for Excel pie chart.");
+            return;
+        }
+        // Aggregate impressions by location name
+        Map<String, Long> locationImpressions = new LinkedHashMap<>();
+        for (CategoryData data : categoryDataList) {
+            String rawName = data.getCategoryName();
+            if (rawName == null || rawName.trim().isEmpty()) continue;
+            String locationName = rawName.trim();
+            long impressions = data.getImpressions() != null ? data.getImpressions() : 0L;
+            locationImpressions.put(locationName, locationImpressions.getOrDefault(locationName, 0L) + impressions);
+        }
+        if (locationImpressions.isEmpty()) {
+            System.out.println("No valid location names for Excel pie chart.");
+            return;
+        }
+        // Create workbook and sheets
+        org.apache.poi.xssf.usermodel.XSSFWorkbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
+        org.apache.poi.xssf.usermodel.XSSFSheet dataSheet = workbook.createSheet("Location Data");
+        org.apache.poi.ss.usermodel.Sheet chartSheet = workbook.createSheet("Pie Chart");
+        // Write header
+        org.apache.poi.ss.usermodel.Row header = dataSheet.createRow(0);
+        header.createCell(0).setCellValue("Location");
+        header.createCell(1).setCellValue("Impressions");
+        // Write data
+        int rowIdx = 1;
+        for (Map.Entry<String, Long> entry : locationImpressions.entrySet()) {
+            org.apache.poi.ss.usermodel.Row row = dataSheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(entry.getKey());
+            row.createCell(1).setCellValue(entry.getValue());
+        }
+        // Autosize columns
+        dataSheet.autoSizeColumn(0);
+        dataSheet.autoSizeColumn(1);
+        // Create the pie chart
+        org.apache.poi.ss.usermodel.Drawing<?> drawing = chartSheet.createDrawingPatriarch();
+        org.apache.poi.ss.usermodel.ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 20);
+        org.apache.poi.xssf.usermodel.XSSFChart chart = ((org.apache.poi.xssf.usermodel.XSSFDrawing) drawing).createChart(anchor);
+        chart.setTitleText("Impressions by Location");
+        chart.setTitleOverlay(false);
+        org.apache.poi.xddf.usermodel.chart.XDDFChartLegend legend = chart.getOrAddLegend();
+        legend.setPosition(org.apache.poi.xddf.usermodel.chart.LegendPosition.BOTTOM);
+        // Data sources
+        int lastRow = locationImpressions.size();
+        org.apache.poi.xddf.usermodel.chart.XDDFDataSource<String> locations = org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory.fromStringCellRange(
+            dataSheet, new org.apache.poi.ss.util.CellRangeAddress(1, lastRow, 0, 0));
+        org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource<Double> impressions = org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory.fromNumericCellRange(
+            dataSheet, new org.apache.poi.ss.util.CellRangeAddress(1, lastRow, 1, 1));
+        // Pie chart
+        org.apache.poi.xddf.usermodel.chart.XDDFChartData data = chart.createData(org.apache.poi.xddf.usermodel.chart.ChartTypes.PIE, null, null);
+        data.addSeries(locations, impressions);
+        chart.plot(data);
+        // Enable data labels: show category name and percentage (using reflection for POI 5.x)
+        if (data instanceof org.apache.poi.xddf.usermodel.chart.XDDFPieChartData) {
+            org.apache.poi.xddf.usermodel.chart.XDDFPieChartData pieData = (org.apache.poi.xddf.usermodel.chart.XDDFPieChartData) data;
+            if (pieData.getSeriesCount() > 0) {
+                org.apache.poi.xddf.usermodel.chart.XDDFChartData.Series series = pieData.getSeries(0);
+                try {
+                    java.lang.reflect.Method getXmlObject = series.getClass().getMethod("getXmlObject");
+                    org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer ctSeries = (org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer) getXmlObject.invoke(series);
+                    org.openxmlformats.schemas.drawingml.x2006.chart.CTDLbls dLbls = ctSeries.getDLbls();
+                    if (dLbls == null) {
+                        dLbls = ctSeries.addNewDLbls();
+                    }
+                    dLbls.addNewShowCatName().setVal(true);
+                    dLbls.addNewShowPercent().setVal(true);
+                    dLbls.addNewShowLeaderLines().setVal(true);
+                    // Set label position to OUT_END (outside end)
+                    dLbls.addNewDLblPos().setVal(org.openxmlformats.schemas.drawingml.x2006.chart.STDLblPos.OUT_END);
+                } catch (Exception e) {
+                    System.err.println("Could not set pie chart data labels: " + e.getMessage());
+                }
+            }
+        }
+        // Save workbook
+        try (java.io.FileOutputStream fileOut = new java.io.FileOutputStream("location_pie_chart.xlsx")) {
+            workbook.write(fileOut);
+        }
+        workbook.close();
+        System.out.println("Excel file with pie chart saved as location_pie_chart.xlsx");
     }
     
     // Getter methods to access the data collections

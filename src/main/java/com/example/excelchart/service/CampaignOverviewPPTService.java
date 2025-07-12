@@ -8,6 +8,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -36,6 +37,8 @@ public class CampaignOverviewPPTService {
         // Calculate and add campaign details
         addCampaignDetails(slide, campaignDataList, dateDataList, cityDataList, 
                           categoryDataList, screenDataList, publisherDataList);
+        // Add pie chart slide if image exists
+        addPieChartSlide(ppt, "category_pie_chart.png");
         // Save the presentation
         try (FileOutputStream out = new FileOutputStream(outputPath)) {
             ppt.write(out);
@@ -226,6 +229,33 @@ public class CampaignOverviewPPTService {
         }
         
         return data;
+    }
+    
+    private void addPieChartSlide(XMLSlideShow ppt, String imagePath) {
+        File imgFile = new File(imagePath);
+        if (!imgFile.exists()) {
+            System.out.println("Pie chart image not found: " + imagePath);
+            return;
+        }
+        try {
+            byte[] pictureData = java.nio.file.Files.readAllBytes(imgFile.toPath());
+            XSLFPictureData pd = ppt.addPicture(pictureData, XSLFPictureData.PictureType.PNG);
+            XSLFSlide slide = ppt.createSlide();
+            XSLFPictureShape pic = slide.createPicture(pd);
+            pic.setAnchor(new java.awt.Rectangle(120, 80, 1040, 560));
+            // Add a title
+            XSLFTextBox titleBox = slide.createTextBox();
+            titleBox.setAnchor(new java.awt.Rectangle(50, 30, 1180, 60));
+            XSLFTextParagraph titlePara = titleBox.addNewTextParagraph();
+            titlePara.setTextAlign(TextAlign.CENTER);
+            XSLFTextRun titleRun = titlePara.addNewTextRun();
+            titleRun.setText("Impressions by Category");
+            titleRun.setFontSize(32.0);
+            titleRun.setBold(true);
+            titleRun.setFontColor(Color.BLACK);
+        } catch (Exception e) {
+            System.err.println("Error adding pie chart slide: " + e.getMessage());
+        }
     }
     
     // Data class to hold campaign overview information

@@ -3,6 +3,7 @@ package com.example.excelchart.controller;
 import com.example.excelchart.service.ExcelService;
 import com.example.excelchart.service.PowerPointExportService;
 import com.example.excelchart.service.CampaignOverviewPPTService;
+import com.example.excelchart.service.ExcelPieChartGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -32,6 +33,9 @@ public class ExcelController {
     
     @Autowired
     private CampaignOverviewPPTService campaignOverviewPPTService;
+    
+    @Autowired
+    private ExcelPieChartGeneratorService excelPieChartGeneratorService;
     
     @Value("${app.upload.dir:${java.io.tmpdir}/uploads}")
     private String uploadDir;
@@ -70,6 +74,14 @@ public class ExcelController {
             System.out.println("Starting Excel processing...");
             excelService.readAndGenerateCharts(excelFile);
             System.out.println("Excel processing completed successfully!");
+
+            // Generate Excel file with pie chart
+            try {
+                excelPieChartGeneratorService.generateLocationPieChartExcel(excelService.getCategoryDataList());
+                System.out.println("Excel pie chart file generated successfully!");
+            } catch (Exception e) {
+                System.err.println("Error generating Excel pie chart: " + e.getMessage());
+            }
             
             // Clean up the uploaded file
             Files.deleteIfExists(excelFile.toPath());
@@ -139,6 +151,25 @@ public class ExcelController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
                 
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/download-excel")
+    @ResponseBody
+    public ResponseEntity<Resource> downloadExcel() {
+        try {
+            File excelFile = new File("location_pie_chart.xlsx");
+            if (!excelFile.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+            Path path = excelFile.toPath();
+            Resource resource = new org.springframework.core.io.FileSystemResource(path);
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=location_pie_chart.xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

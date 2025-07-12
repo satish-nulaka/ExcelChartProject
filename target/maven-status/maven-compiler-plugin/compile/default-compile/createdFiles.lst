@@ -2,6 +2,7 @@ com\example\excelchart\service\CampaignOverviewPPTService.class
 com\example\excelchart\config\FileUploadConfig.class
 com\example\excelchart\domain\PublisherData.class
 com\example\excelchart\domain\LineItemData.class
+com\example\excelchart\service\ExcelPieChartGeneratorService.class
 com\example\excelchart\ExcelChartApplication.class
 com\example\excelchart\service\PowerPointExportService.class
 com\example\excelchart\domain\DateData.class
