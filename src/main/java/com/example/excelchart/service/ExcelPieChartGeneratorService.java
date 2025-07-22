@@ -12,12 +12,15 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDLbls;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STDLblPos;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.FileOutputStream;
 import java.util.*;
 
 @Service
 public class ExcelPieChartGeneratorService {
+    @Autowired
+    private ExcelBarChartGeneratorService excelBarChartGeneratorService;
 
     public void generateLocationPieChartExcel(List<CategoryData> categoryDataList) throws Exception {
         if (categoryDataList == null || categoryDataList.isEmpty()) {
@@ -109,6 +112,8 @@ public class ExcelPieChartGeneratorService {
         }
 
         // Save workbook
+        // Add bar chart next to pie chart
+        excelBarChartGeneratorService.addCategoryBarChart(categoryDataList, workbook, chartSheet);
         try (FileOutputStream fileOut = new FileOutputStream("location_pie_chart.xlsx")) {
             workbook.write(fileOut);
         }
